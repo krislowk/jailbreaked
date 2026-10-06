@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jailbreaked — system prompt forge</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="bar">
+    <span class="mark">jailbreaked</span>
+    <span class="sub">system prompt forge</span>
+  </header>
+
+  <main class="stage">
+    <button id="forge" class="forge" type="button">
+      <span class="forge-label">FORGE</span>
+      <span class="forge-hint">random · cmd/ctrl + enter</span>
+    </button>
+
+    <div id="card" class="card" hidden>
+      <div class="card-head">
+        <span id="meta-seed"></span>
+        <span id="meta-persona"></span>
+      </div>
+      <pre id="output" class="output"></pre>
+      <div class="card-actions">
+        <button id="copy" type="button">copy</button>
+        <button id="download" type="button">download</button>
+      </div>
+    </div>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+
+  <script src="blocks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
