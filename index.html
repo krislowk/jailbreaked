@@ -3,61 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>jailbreaked — system prompt forge</title>
+  <title>jailbreaked</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="bar">
-    <span class="mark">jailbreaked</span>
-    <span class="sub">system prompt forge</span>
-  </header>
+  <div class="app">
 
-  <main class="stage">
-    <section class="controls" id="controls">
-      <div class="ctrl">
-        <label for="persona-select">persona</label>
-        <select id="persona-select">
-          <option value="">random</option>
-        </select>
+    <aside class="side">
+      <div class="side-head">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <span class="brand-name">jailbreaked</span>
+        </div>
+        <div class="brand-sub">v3 · spec forge</div>
       </div>
 
-      <div class="ctrl">
-        <label for="seed-input">seed</label>
-        <div class="seed-row">
-          <input id="seed-input" type="text" inputmode="text" placeholder="random" autocomplete="off" />
-          <button id="seed-reroll" type="button" title="reroll seed">↻</button>
+      <div class="side-scroll">
+
+        <section class="field">
+          <div class="field-head">
+            <label for="persona-select">persona</label>
+            <button class="mini" id="persona-add" title="new persona">+</button>
+          </div>
+          <select id="persona-select"></select>
+        </section>
+
+        <section class="field">
+          <div class="field-head">
+            <label for="seed-input">seed</label>
+            <button class="mini" id="seed-reroll" title="reroll">↻</button>
+          </div>
+          <input id="seed-input" type="text" placeholder="random" autocomplete="off" spellcheck="false" />
+        </section>
+
+        <section class="field">
+          <div class="field-head">
+            <label>blocks</label>
+            <button class="mini" id="blocks-all" title="all / none">◐</button>
+          </div>
+          <div id="block-list" class="block-list"></div>
+        </section>
+
+        <section class="field">
+          <div class="field-head">
+            <label>order</label>
+          </div>
+          <select id="order-select">
+            <option value="shuffle">shuffle</option>
+            <option value="registry">registry</option>
+            <option value="reverse">reverse</option>
+          </select>
+        </section>
+
+      </div>
+
+      <div class="side-foot">
+        <button class="forge" id="forge">
+          <span>forge</span>
+          <kbd>⌘↵</kbd>
+        </button>
+        <div class="side-foot-row">
+          <button class="ghost" id="config-btn">config</button>
+          <button class="ghost" id="reset-btn">reset</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="main-head">
+        <div class="meta" id="meta">
+          <span class="meta-dot"></span>
+          <span id="meta-text">idle</span>
+        </div>
+        <div class="main-actions">
+          <button class="icon-btn" id="copy" title="copy">copy</button>
+          <button class="icon-btn" id="download" title="download">save</button>
         </div>
       </div>
 
-      <div class="ctrl ctrl-wide">
-        <label>blocks</label>
-        <div id="block-toggles" class="toggles"></div>
+      <div class="main-body">
+        <div class="empty" id="empty">
+          <div class="empty-glyph">◇</div>
+          <div class="empty-title">no prompt forged</div>
+          <div class="empty-sub">hit <kbd>forge</kbd> or <kbd>⌘↵</kbd> to roll one</div>
+        </div>
+        <pre class="out" id="out" hidden></pre>
       </div>
 
-      <div class="ctrl ctrl-actions">
-        <button id="reset" type="button" class="ghost">reset</button>
+      <div class="statusbar">
+        <span id="status-left">ready</span>
+        <span id="status-right">0 chars</span>
       </div>
-    </section>
+    </main>
 
-    <button id="forge" class="forge" type="button">
-      <span class="forge-label">FORGE</span>
-      <span class="forge-hint">random · cmd/ctrl + enter</span>
-    </button>
+  </div>
 
-    <div id="card" class="card" hidden>
-      <div class="card-head">
-        <span id="meta-seed"></span>
-        <span id="meta-persona"></span>
+  <!-- config drawer -->
+  <div class="drawer" id="drawer" hidden>
+    <div class="drawer-head">
+      <span>configuration</span>
+      <button class="icon-btn" id="drawer-close">close</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-tabs">
+        <button class="tab active" data-tab="persona">personas</button>
+        <button class="tab" data-tab="framing">framings</button>
+        <button class="tab" data-tab="variant">variants</button>
+        <button class="tab" data-tab="io">import / export</button>
       </div>
-      <pre id="output" class="output"></pre>
-      <div class="card-actions">
-        <button id="copy" type="button">copy</button>
-        <button id="download" type="button">download</button>
+
+      <div class="tab-pane active" data-pane="persona">
+        <div class="pane-head">add or edit personas. save persists to localStorage.</div>
+        <div id="persona-editor" class="editor"></div>
+        <button class="add-btn" id="persona-new">+ new persona</button>
+      </div>
+
+      <div class="tab-pane" data-pane="framing">
+        <div class="pane-head">custom opening wrappers. one per line separated by a blank line.</div>
+        <textarea id="framing-editor" class="ta" spellcheck="false"></textarea>
+      </div>
+
+      <div class="tab-pane" data-pane="variant">
+        <div class="pane-head">edit variants per block. one per line.</div>
+        <select id="variant-block-select" class="mb"></select>
+        <textarea id="variant-editor" class="ta" spellcheck="false"></textarea>
+      </div>
+
+      <div class="tab-pane" data-pane="io">
+        <div class="pane-head">paste to import. copy to back up.</div>
+        <textarea id="io-editor" class="ta" spellcheck="false" placeholder="config json"></textarea>
+        <div class="io-row">
+          <button class="ghost" id="io-load">load</button>
+          <button class="ghost" id="io-dump">dump</button>
+        </div>
       </div>
     </div>
-
-    <p id="error" class="error" hidden></p>
-  </main>
+  </div>
 
   <script src="blocks.js"></script>
   <script src="app.js"></script>
