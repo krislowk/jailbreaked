@@ -563,3 +563,45 @@ kbd {
   .app { grid-template-columns: 1fr; }
   .side { display: none; }
 }
+
+/* hidden must win against display:flex/grid */
+[hidden] { display: none !important; }
+
+/* drawer polish */
+.drawer-body { padding: 20px 20px 40px; }
+
+.drawer .field select,
+.drawer .field input { background: var(--bg); }
+
+.drawer-tabs {
+  position: sticky;
+  top: 0;
+  background: var(--bg-side);
+  z-index: 2;
+  margin: 0 -20px 20px;
+  padding: 0 20px;
+}
+
+.editor { max-height: none; }
+
+.pe input {
+  width: 100%;
+  min-width: 0;
+}
+
+.pe {
+  grid-template-columns: 1fr 1fr;
+}
+
+.pe .pe-name { grid-column: 1 / 2; }
+.pe .pe-del  { grid-column: 2 / 3; }
+
+.io-row { padding-bottom: 40px; }
+
+/* close button styling */
+#drawer-close {
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+#drawer-close:hover { border-color: var(--line-focus); }

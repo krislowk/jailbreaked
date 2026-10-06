@@ -52,9 +52,13 @@
   // ─────── state ───────
   var STORAGE = "jailbreaked.v3";
   var state = {
-    personas: PERSONAS.map(function (p) { return { name: p.name, tag: p.tag, sigil: p.sigil, origin: p.origin, operator: p.operator }; }),
+    personas: PERSONAS.map(function (p) {
+      return { name: p.name, tag: p.tag, sigil: p.sigil, origin: p.origin, operator: p.operator };
+    }),
     framings: FRAMINGS.slice(),
-    blocks: BLOCKS.map(function (b) { return { id: b.id, tag: b.tag, label: b.label, variants: b.variants.slice() }; }),
+    blocks: BLOCKS.map(function (b) {
+      return { id: b.id, tag: b.tag, label: b.label, variants: b.variants.slice() };
+    }),
     enabled: {},
     order: "shuffle",
     persona: "",
@@ -122,12 +126,7 @@
     var text = parts.join("\n\n");
     if (hasUnresolved(text)) return null;
 
-    return {
-      seed: seed,
-      persona: persona,
-      text: text,
-      count: ordered.length
-    };
+    return { seed: seed, persona: persona, text: text, count: ordered.length };
   }
 
   function findPersona(name) {
@@ -265,12 +264,16 @@
   // ─────── drawer ───────
   function openDrawer() {
     els.drawer.hidden = false;
+    document.body.style.overflow = "hidden";
     renderPersonaEditor();
     els.framingEditor.value = state.framings.join("\n\n");
     renderVariantBlockSelect();
     loadVariantEditor();
   }
-  function closeDrawer() { els.drawer.hidden = true; }
+  function closeDrawer() {
+    els.drawer.hidden = true;
+    document.body.style.overflow = "";
+  }
 
   function renderPersonaEditor() {
     els.personaEditor.innerHTML = "";
@@ -348,11 +351,13 @@
   els.order.addEventListener("change", function () { state.order = els.order.value; saveConfig(); });
   els.forge.addEventListener("click", forge);
   els.reset.addEventListener("click", function () {
+    if (!confirm("wipe custom config and reload?")) return;
     localStorage.removeItem(STORAGE);
     location.reload();
   });
-  els.configBtn.addEventListener("click", openDrawer);
-  els.drawerClose.addEventListener("click", closeDrawer);
+
+  if (els.configBtn) els.configBtn.addEventListener("click", openDrawer);
+  if (els.drawerClose) els.drawerClose.addEventListener("click", closeDrawer);
 
   document.addEventListener("keydown", function (e) {
     if ((e.metaKey || e.ctrlKey) && (e.key === "Enter" || e.key === " ")) {
@@ -396,7 +401,8 @@
       tabs.forEach(function (x) { x.classList.remove("active"); });
       panes.forEach(function (x) { x.classList.remove("active"); });
       t.classList.add("active");
-      els.drawer.querySelector('.tab-pane[data-pane="' + t.dataset.tab + '"]').classList.add("active");
+      var pane = els.drawer.querySelector('.tab-pane[data-pane="' + t.dataset.tab + '"]');
+      if (pane) pane.classList.add("active");
     });
   });
 
@@ -409,11 +415,14 @@
 
   els.framingEditor.addEventListener("change", function () {
     var parts = els.framingEditor.value.split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean);
-    if (parts.length) { state.framings = parts; saveConfig(); }
+    if (parts.length) { state.framings = parts; saveConfig(); setStatus("framings saved"); }
   });
 
   els.variantBlockSelect.addEventListener("change", loadVariantEditor);
-  els.variantEditor.addEventListener("change", commitVariantEditor);
+  els.variantEditor.addEventListener("change", function () {
+    commitVariantEditor();
+    setStatus("variants saved");
+  });
 
   els.ioDump.addEventListener("click", function () {
     els.ioEditor.value = JSON.stringify({
@@ -423,7 +432,9 @@
       enabled: state.enabled,
       order: state.order
     }, null, 2);
+    setStatus("config dumped");
   });
+
   els.ioLoad.addEventListener("click", function () {
     try {
       var parsed = JSON.parse(els.ioEditor.value);
