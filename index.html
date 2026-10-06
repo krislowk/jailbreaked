@@ -13,6 +13,32 @@
   </header>
 
   <main class="stage">
+    <section class="controls" id="controls">
+      <div class="ctrl">
+        <label for="persona-select">persona</label>
+        <select id="persona-select">
+          <option value="">random</option>
+        </select>
+      </div>
+
+      <div class="ctrl">
+        <label for="seed-input">seed</label>
+        <div class="seed-row">
+          <input id="seed-input" type="text" inputmode="text" placeholder="random" autocomplete="off" />
+          <button id="seed-reroll" type="button" title="reroll seed">↻</button>
+        </div>
+      </div>
+
+      <div class="ctrl ctrl-wide">
+        <label>blocks</label>
+        <div id="block-toggles" class="toggles"></div>
+      </div>
+
+      <div class="ctrl ctrl-actions">
+        <button id="reset" type="button" class="ghost">reset</button>
+      </div>
+    </section>
+
     <button id="forge" class="forge" type="button">
       <span class="forge-label">FORGE</span>
       <span class="forge-hint">random · cmd/ctrl + enter</span>
